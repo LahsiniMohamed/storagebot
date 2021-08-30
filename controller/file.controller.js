@@ -1,7 +1,4 @@
-const processFile = require("../middleware/upload");
-const { format } = require("util");
 const { Storage } = require("@google-cloud/storage");
-const {b64toBlob} = require("../controller/functions")
 const fs = require('fs');
 // Instantiate a storage client with credentials
 const storage = new Storage({ keyFilename: "google-cloud-key.json" });
@@ -9,19 +6,17 @@ const bucket = storage.bucket("ervcaf-a4ab0.appspot.com");
 
 
 const upload = async (req, res) => {
-    console.log('uploading file ...')
-
     try {
-        if(!req.body.name){
-          req.body.name = "test"
-        }
+
         const {blob, name, mimetype, savePath} = req.body
-        console.log('file requested',name)
+        console.log('............ uploading : ',name,' ............')
         if(blob){
             console.log('data exists')
         }
         fs.writeFile('./documents/'+name, blob,'base64',(err)=>{
-          if(err) return console.log('error creating file',err)
+          if(err) {
+            throw err
+        }
           console.log('created file successufully')
         })
         console.log('upload file')
@@ -33,7 +28,7 @@ const upload = async (req, res) => {
         console.log('deleting file created')
         fs.unlink('./documents/'+name,(err)=>{
           if(err){
-            console.log('error deleting file', err)
+            throw err
           }
           console.log('file deleted successufully')
         })
@@ -42,9 +37,9 @@ const upload = async (req, res) => {
         })
 
       } catch (err) {
-        console.log('error getting uploading file',err)
+        console.log('error while uploading file',err)
         res.status(500).send({
-          message: `Could not upload the file: ${req.body.name}. ${err}`,
+          message: `Could not upload the file: ${req.bo.dy.name} ${err}`,
         });
       }
   }

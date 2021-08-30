@@ -4,6 +4,8 @@ const express = require('express')
 const app = express()
 const routes = require("./routes");
 
+const conf = require('dotenv').config()
+
 app.use(express.json({
   limit:'50mb'
 }))
@@ -13,11 +15,11 @@ app.use(express.urlencoded({
   extended: true 
 }))
 
-port = 8080;
+port = process.env.PORT;
 
 app.use(routes.router)
 
 
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
+    console.log(`app listening at http://localhost:${port}`)
   })
